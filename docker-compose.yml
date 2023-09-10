@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  backend:
+    build: 
+      context: .
+      # 今回は他のserviceのディレクトリにアクセスすることはないのでbackEndで良いが、
+      # 他のserviceのディレクトリにアクセスする場合は、「.」としてルートディレクトリから全てアクセスできるようにしておく
+      dockerfile: ./docker/python/Dockerfile
+    container_name: django
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/backend
+    ports:
+      - "8100:8000"
+    depends_on:
+      - db
